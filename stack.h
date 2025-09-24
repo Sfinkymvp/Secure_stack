@@ -13,9 +13,6 @@ typedef int element_t;
 #define INIT_STACK(name) Stack_t name = {INIT(name)}
 
 
-extern const char* stack_err_str[];
-
-
 typedef enum {
     SUCCESS = 0,
     NULL_PTR,
@@ -32,6 +29,7 @@ typedef struct {
     int line;
 } Stack_creation_info;
 
+
 typedef struct {
     element_t* data;
     size_t size;
@@ -40,16 +38,10 @@ typedef struct {
 } Stack_t;
 
 
-stack_err_t stack_err(Stack_t* stack);
-
-
-void stack_dump(Stack_t* stack, stack_err_t err);
-
-
 stack_err_t stack_ctor(Stack_t* stack, size_t size);
 
 
-void stack_dtor(Stack_t* stack);
+stack_err_t stack_dtor(Stack_t* stack);
 
 
 stack_err_t stack_push(Stack_t* stack, element_t value);
