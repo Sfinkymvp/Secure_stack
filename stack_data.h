@@ -5,15 +5,15 @@
 const int START_CAPACITY = 10;
 
 
-typedef int element_t;
+typedef int Element_t;
 #define SPEC "%d"
 
 #ifdef DEBUG
-const element_t POISON = 0x1DF1E1D;
+const Element_t POISON = 0x1DF1E1D;
 #endif
 
-const element_t LEFT_CANARY = 0xFF1C1A1;
-const element_t RIGHT_CANARY = 0xFF51DE5;
+const Element_t LEFT_CANARY = 0xFF1C1A1;
+const Element_t RIGHT_CANARY = 0xFF51DE5;
 
 
 typedef enum {
@@ -24,7 +24,7 @@ typedef enum {
     STACK_UNDERFLOW,
     POISON_CORRUPTED,
     CANARY_CORRUPTED
-} Stack_err_t;
+} StackError;
 
 
 #ifdef DEBUG
@@ -38,7 +38,7 @@ typedef struct {
 
 
 typedef struct {
-    element_t* data;
+    Element_t* data;
     size_t size;
     size_t capacity;
 #ifdef DEBUG

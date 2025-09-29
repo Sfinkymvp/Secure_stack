@@ -14,16 +14,16 @@
 #endif
 
 
-Stack_err_t stackCtor(Stack_t* stack, size_t size);
+StackError stackCtor(Stack_t* stack, size_t size);
 
 
-Stack_err_t stackDtor(Stack_t* stack);
+StackError stackDtor(Stack_t* stack);
 
 
-Stack_err_t stackPush(Stack_t* stack, element_t value);
+StackError stackPush(Stack_t* stack, Element_t value);
 
 
-Stack_err_t stackPop(Stack_t* stack, element_t* element);
+StackError stackPop(Stack_t* stack, Element_t* element);
 
 
 #endif

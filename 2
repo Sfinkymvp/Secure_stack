@@ -1,0 +1,22 @@
+StackAssert triggered in stackPop (stack.cpp:92)
+Stack 'stack' [0x722543200040] (CANARY_CORRUPTED (error 6))
+Created in main() at main.cpp:10
+
+size = 1
+capacity = 10
+
+LEFT_CANARY NOT OK: 0x34 (expected 0xFF1C1A1)
+RIGHT_CANARY NOT OK: 0x34 (expected 0xFF51DE5)
+data[0x504000000010]
+{
+	*[0] = 52
+	*[1] = 52
+	 [2] = CORRUPTED (not POISON)
+	 [3] = CORRUPTED (not POISON)
+	 [4] = CORRUPTED (not POISON)
+	 [5] = CORRUPTED (not POISON)
+	 [6] = CORRUPTED (not POISON)
+	 [7] = CORRUPTED (not POISON)
+	 [8] = CORRUPTED (not POISON)
+	 [9] = CORRUPTED (not POISON)
+}

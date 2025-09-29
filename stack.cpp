@@ -6,24 +6,23 @@
 #include "stack_error.h"
 
 
-static Stack_err_t stackExpand(Stack_t* stack)
+static StackError stackExpand(Stack_t* stack)
 {
-    Stack_err_t error_code = stackErr(stack);
+    StackError error_code = stackAssert(stack);
     if (error_code != SUCCESS)
         return error_code;
 
-    void* temp = realloc(stack->data, (stack->capacity * 2 + 2) * sizeof(*stack->data));
+    void* temp = realloc(stack->data, (stack->capacity * 2 + 2) * sizeof(Element_t));
     if (temp == NULL) {
         free(stack->data);
         return OUT_OF_MEMORY;
     }
     
-    stack->data = (element_t*)temp;
+    stack->data = (Element_t*)temp;
     stack->capacity *= 2;
     stack->data[stack->capacity + 1] = RIGHT_CANARY;
-
 #ifdef DEBUG
-    for (size_t index = stack->capacity / 2; index < stack->capacity + 1; index++)
+    for (size_t index = stack->capacity / 2 + 1; index < stack->capacity + 1; index++)
         stack->data[index] = POISON;
 #endif
 
@@ -31,18 +30,17 @@ static Stack_err_t stackExpand(Stack_t* stack)
 }
 
 
-Stack_err_t stackCtor(Stack_t* stack, size_t size)
+StackError stackCtor(Stack_t* stack, size_t size)
 {
     if (stack == NULL)
         return NULL_PTR;
 
-    stack->data = (element_t*)calloc(size + 2, sizeof(element_t));
+    stack->data = (Element_t*)calloc(size + 2, sizeof(Element_t));
     if (stack->data == NULL)
         return OUT_OF_MEMORY;
 
     stack->capacity = size;
     stack->size = 0;
-
     stack->data[0] = LEFT_CANARY;
 #ifdef DEBUG
     for (size_t index = 1; index < stack->capacity + 1; index++)
@@ -54,26 +52,24 @@ Stack_err_t stackCtor(Stack_t* stack, size_t size)
 }
 
 
-Stack_err_t stackDtor(Stack_t* stack)
+StackError stackDtor(Stack_t* stack)
 {
-    Stack_err_t error_code = stackErr(stack);
-    if (error_code == NULL_PTR)
-        return error_code;
+    if (stack == NULL)
+        return NULL_PTR;
 
     free(stack->data);
     stack->data = NULL;
 
-    return error_code;
+    return SUCCESS;
 }
 
 
-Stack_err_t stackPush(Stack_t* stack, element_t value)
+StackError stackPush(Stack_t* stack, Element_t value)
 {
-    Stack_err_t error_code = stackErr(stack);
-    if (error_code != SUCCESS) {
-        stackDump(stack, error_code);
+    StackError error_code = stackAssert(stack);
+
+    if (error_code != SUCCESS) 
         return error_code; 
-    }
 
     if (stack->size == stack->capacity) {
         error_code = stackExpand(stack);
@@ -83,22 +79,25 @@ Stack_err_t stackPush(Stack_t* stack, element_t value)
 
     stack->data[stack->size++ + 1] = value;
   
-    return stackErr(stack);
+    return stackAssert(stack);
 }
 
 
-Stack_err_t stackPop(Stack_t* stack, element_t* element)
+StackError stackPop(Stack_t* stack, Element_t* value)
 {
-    if (element == NULL)
+    if (value == NULL)
         return NULL_PTR;
 
-    Stack_err_t error_code = stackErr(stack);
+    StackError error_code = stackAssert(stack);
     if (error_code != SUCCESS)
         return error_code;
     if (stack->size == 0)
         return STACK_UNDERFLOW;
-        
-    *element = stack->data[--stack->size + 1];
 
-    return stackErr(stack);
+    *value = stack->data[--stack->size + 1];
+#ifdef DEBUG
+    stack->data[stack->size + 1] = POISON;
+#endif
+
+    return stackAssert(stack);
 }

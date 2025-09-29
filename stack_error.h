@@ -5,16 +5,22 @@
 #include "stack_data.h"
 
 
-extern const char* error_string[];
+#define stackAssert(stack) _stackAssert(stack, __func__, __FILE__, __LINE__)
 
 
-Stack_err_t stackAssert(Stack_t* stack);
+extern const char* ErrorString[];
 
 
-Stack_err_t stackErr(Stack_t* stack);
+StackError _stackAssert(Stack_t* stack,
+                       const char* function,
+                       const char* file,
+                       int line);
 
 
-void stackDump(Stack_t* stack, Stack_err_t err);
+StackError stackErr(Stack_t* stack);
+
+
+void stackDump(Stack_t* stack, StackError error_code);
 
 
 #endif
