@@ -9,17 +9,12 @@ int main()
 {
     INIT_STACK(stack);
 
-    stack_ctor(&stack, START_CAPACITY);
+    stackCtor(&stack, START_CAPACITY);
 
-    stack_push(&stack, 10);
+    stack.data[0] = 5;
+    stackPush(&stack, 10);
 
-    stack_push(&stack, 20);
-
-    stack_push(&stack, 30);
-    
-    element_t element = 0;
-  
-    stack_dtor(&stack);
+    stackDtor(&stack);
 
     return 0;
 }

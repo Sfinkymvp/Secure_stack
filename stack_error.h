@@ -2,16 +2,19 @@
 #define _STACK_ERROR_H_
 
 
-#include "stack.h"
+#include "stack_data.h"
 
 
-extern const char* stack_err_str[];
+extern const char* error_string[];
 
 
-stack_err_t stack_err(Stack_t* stack);
+Stack_err_t stackAssert(Stack_t* stack);
 
 
-void stack_dump(Stack_t* stack, stack_err_t err);
+Stack_err_t stackErr(Stack_t* stack);
+
+
+void stackDump(Stack_t* stack, Stack_err_t err);
 
 
 #endif
