@@ -1,4 +1,5 @@
-FLAGS = -D_DEBUG -ggdb3 -std=c++17 -O0 \
+FLAGS = -DDEBUG\
+  -ggdb3 -std=c++17 -O0 \
   -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations -Wc++14-compat \
   -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts \
   -Wconditionally-supported -Wconversion -Wctor-dtor-privacy \
@@ -17,6 +18,7 @@ FLAGS = -D_DEBUG -ggdb3 -std=c++17 -O0 \
   -Wlarger-than=16384 -Wstack-usage=8192 -pie -fPIE -Werror=vla \
   -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
+
 NAME = stack
 OBJDIR = obj
 
@@ -25,8 +27,8 @@ $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
 
-$(NAME): $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o
-	@g++ $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(FLAGS) -o $(NAME)
+$(NAME): $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(OBJDIR)/stack_hash.o
+	@g++ $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(OBJDIR)/stack_hash.o $(FLAGS) -o $(NAME)
 
 
 $(OBJDIR)/main.o: main.cpp | $(OBJDIR)
@@ -39,3 +41,7 @@ $(OBJDIR)/stack.o: stack.cpp | $(OBJDIR)
 
 $(OBJDIR)/stack_error.o: stack_error.cpp | $(OBJDIR)
 	@g++ -c stack_error.cpp $(FLAGS) -o $(OBJDIR)/stack_error.o
+
+
+$(OBJDIR)/stack_hash.o: stack_hash.cpp | $(OBJDIR)
+	@g++ -c stack_hash.cpp $(FLAGS) -o $(OBJDIR)/stack_hash.o

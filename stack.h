@@ -14,6 +14,9 @@
 #endif
 
 
+StackError stackExpand(Stack_t* stack);
+
+
 StackError stackCtor(Stack_t* stack, size_t size);
 
 
@@ -23,7 +26,7 @@ StackError stackDtor(Stack_t* stack);
 StackError stackPush(Stack_t* stack, Element_t value);
 
 
-StackError stackPop(Stack_t* stack, Element_t* element);
+StackError stackPop(Stack_t* stack, Element_t* value);
 
 
 #endif

@@ -4,9 +4,10 @@
 
 #include "stack.h"
 #include "stack_error.h"
+#include "stack_hash.h"
 
 
-static StackError stackExpand(Stack_t* stack)
+StackError stackExpand(Stack_t* stack)
 {
     StackError error_code = stackAssert(stack);
     if (error_code != SUCCESS)
@@ -24,6 +25,7 @@ static StackError stackExpand(Stack_t* stack)
 #ifdef DEBUG
     for (size_t index = stack->capacity / 2 + 1; index < stack->capacity + 1; index++)
         stack->data[index] = POISON;
+    calculateHash(stack);
 #endif
 
     return SUCCESS;
@@ -45,6 +47,7 @@ StackError stackCtor(Stack_t* stack, size_t size)
 #ifdef DEBUG
     for (size_t index = 1; index < stack->capacity + 1; index++)
         stack->data[index] = POISON;
+    calculateHash(stack);
 #endif
     stack->data[stack->capacity + 1] = RIGHT_CANARY;
 
@@ -78,6 +81,9 @@ StackError stackPush(Stack_t* stack, Element_t value)
     }
 
     stack->data[stack->size++ + 1] = value;
+#ifdef DEBUG
+    calculateHash(stack);
+#endif
   
     return stackAssert(stack);
 }
@@ -97,6 +103,7 @@ StackError stackPop(Stack_t* stack, Element_t* value)
     *value = stack->data[--stack->size + 1];
 #ifdef DEBUG
     stack->data[stack->size + 1] = POISON;
+    calculateHash(stack);
 #endif
 
     return stackAssert(stack);

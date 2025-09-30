@@ -23,7 +23,8 @@ typedef enum {
     STACK_OVERFLOW,
     STACK_UNDERFLOW,
     POISON_CORRUPTED,
-    CANARY_CORRUPTED
+    CANARY_CORRUPTED,
+    HASH_CORRUPTED
 } StackError;
 
 
@@ -43,6 +44,7 @@ typedef struct {
     size_t capacity;
 #ifdef DEBUG
     StackDebugInfo debug_info;
+    size_t hash;
 #endif
 } Stack_t;
 

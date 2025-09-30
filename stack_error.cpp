@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "stack_error.h"
+#include "stack_hash.h"
 #include "stack.h"
 
 
@@ -13,10 +14,11 @@ const char* ErrorString[] = {
     "STACK_OVERFLOW (error 3)",
     "STACK_UNDERFLOW (error 4)",
     "POISON_CORRUPTED (error 5)",
-    "CANARY_CORRUPTED (error 6)"};
+    "CANARY_CORRUPTED (error 6)",
+    "HASH_CORRUPTED (error 7)"};
 
 
-
+#ifdef DEBUG
 StackError _stackAssert(Stack_t* stack,
                        const char* function,
                        const char* file,
@@ -25,19 +27,37 @@ StackError _stackAssert(Stack_t* stack,
     StackError error_code = stackErr(stack);
 
     if (error_code != SUCCESS) {
-#ifdef DEBUG
         fprintf(stderr, "StackAssert triggered in %s (%s:%d)\n",
                 function, file, line);
-#endif
+        stackDump(stack, error_code);
+#ifdef HARD
         if (error_code != NULL_PTR) {
-            stackDump(stack, error_code);
             stackDtor(stack);
             abort();
         }
+#endif // HARD
     }
 
     return error_code;
 }
+#else
+StackError _stackAssert(Stack_t* stack)
+{
+    StackError error_code = stackErr(stack);
+
+    if (error_code != SUCCESS) {
+        stackDump(stack, error_code);
+#ifdef HARD
+        if (error_code != NULL_PTR) {
+            stackDtor(stack);
+            abort();
+        }
+#endif // HARD
+    }
+
+    return error_code;
+}
+#endif // DEBUG
 
 
 StackError stackErr(Stack_t* stack)
@@ -53,6 +73,8 @@ StackError stackErr(Stack_t* stack)
     for (size_t index = stack->size + 1; index < stack->capacity + 1; index++)
         if (stack->data[index] != POISON)
             return POISON_CORRUPTED;
+    if (!checkHash(stack))
+        return HASH_CORRUPTED; 
 #endif 
     return SUCCESS;
 }
@@ -97,7 +119,7 @@ void stackDump(Stack_t* stack, StackError error_code)
 #ifdef DEBUG 
     fprintf(stderr, "{\n");
     size_t index = 0;
-    for (index = 1; index < stack->size + 2; index++)
+    for (index = 1; index < stack->size + 1; index++)
         fprintf(stderr, "\t*[%zu] = " SPEC"\n", index - 1, stack->data[index]);
 
     for (; index < stack->capacity + 1; index++) {

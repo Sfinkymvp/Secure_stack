@@ -11,18 +11,12 @@ int main()
 
     stackCtor(&stack, START_CAPACITY);
 
-    if (stackPush(&stack, 10) != SUCCESS)
-        return 1;
-    
-    for (size_t index = 0; index <= stack.capacity + 1; index++)
-        stack.data[index] = 52;
+    stackPush(&stack, 10);
+
+    stack.data[0] = 52;
 
     Element_t num = 0;
-    if (stackPop(&stack, &num) != SUCCESS)
-        return 1;
-
-
-    printf(SPEC"\n", num);
+    stackPop(&stack, &num);
 
     stackDtor(&stack);
 
