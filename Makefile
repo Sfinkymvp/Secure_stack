@@ -1,4 +1,4 @@
-FLAGS = -DDEBUG\
+FLAGS = -DDEBUG -D_HARD\
   -ggdb3 -std=c++17 -O0 \
   -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations -Wc++14-compat \
   -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts \
@@ -27,8 +27,8 @@ $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
 
-$(NAME): $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(OBJDIR)/stack_hash.o
-	@g++ $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(OBJDIR)/stack_hash.o $(FLAGS) -o $(NAME)
+$(NAME): $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(OBJDIR)/stack_hash.o $(OBJDIR)/stack_tests.o
+	@g++ $(OBJDIR)/main.o $(OBJDIR)/stack.o $(OBJDIR)/stack_error.o $(OBJDIR)/stack_hash.o $(OBJDIR)/stack_tests.o $(FLAGS) -o $(NAME)
 
 
 $(OBJDIR)/main.o: main.cpp | $(OBJDIR)
@@ -45,3 +45,6 @@ $(OBJDIR)/stack_error.o: stack_error.cpp | $(OBJDIR)
 
 $(OBJDIR)/stack_hash.o: stack_hash.cpp | $(OBJDIR)
 	@g++ -c stack_hash.cpp $(FLAGS) -o $(OBJDIR)/stack_hash.o
+
+$(OBJDIR)/stack_tests.o: stack_tests.cpp | $(OBJDIR)
+	@g++ -c stack_tests.cpp $(FLAGS) -o $(OBJDIR)/stack_tests.o

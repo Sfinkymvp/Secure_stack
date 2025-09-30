@@ -3,22 +3,22 @@
 #include <assert.h>
 
 #include "stack.h"
+#include "stack_tests.h"
 
 
 int main()
 {
-    INIT_STACK(stack);
+#ifdef DEBUG
+    testNormal();
 
-    stackCtor(&stack, START_CAPACITY);
+    testCanaryCorruption();
 
-    stackPush(&stack, 10);
+    testPoisonCorruption();
 
-    stack.data[0] = 52;
+    testHashCorruption();
 
-    Element_t num = 0;
-    stackPop(&stack, &num);
-
-    stackDtor(&stack);
+    testUnderflow();
+#endif
 
     return 0;
 }

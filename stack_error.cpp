@@ -64,11 +64,11 @@ StackError stackErr(Stack_t* stack)
 {
     if (stack == NULL || stack->data == NULL)
         return NULL_PTR;
+    if (stack->size > stack->capacity)
+        return STACK_OVERFLOW;
     if (stack->data[0] != LEFT_CANARY ||
         stack->data[stack->capacity + 1] != RIGHT_CANARY)
         return CANARY_CORRUPTED;
-    if (stack->size > stack->capacity)
-        return STACK_OVERFLOW;
 #ifdef DEBUG
     for (size_t index = stack->size + 1; index < stack->capacity + 1; index++)
         if (stack->data[index] != POISON)

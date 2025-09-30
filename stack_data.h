@@ -8,10 +8,10 @@ const int START_CAPACITY = 10;
 typedef int Element_t;
 #define SPEC "%d"
 
+
 #ifdef DEBUG
 const Element_t POISON = 0x1DF1E1D;
 #endif
-
 const Element_t LEFT_CANARY = 0xFF1C1A1;
 const Element_t RIGHT_CANARY = 0xFF51DE5;
 
