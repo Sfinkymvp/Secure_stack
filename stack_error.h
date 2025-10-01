@@ -9,26 +9,39 @@
 #define stackAssert(stack) _stackAssert(stack, __func__, __FILE__, __LINE__)
 #else
 #define stackAssert(stack) _stackAssert(stack)
-#endif
+#endif // DEBUG
 
 
 extern const char* ErrorString[];
 
 
 #ifdef DEBUG
-StackError _stackAssert(Stack_t* stack,
-                       const char* function,
-                       const char* file,
-                       int line);
+StackError _stackAssert(const Stack_t* stack,
+                        const char* function,
+                        const char* file,
+                        int line);
 #else
-StackError _stackAssert(Stack_t* stack);
-#endif
+StackError _stackAssert(const Stack_t* stack);
+#endif // DEBUG
 
 
-StackError stackErr(Stack_t* stack);
+StackError stackVerify(const Stack_t* stack);
 
 
-void stackDump(Stack_t* stack, StackError error_code);
+void stackDump(const Stack_t* stack, StackError error_code);
 
 
-#endif
+#ifdef CANARY
+void printCanaryState(const Stack_t* stack);
+#endif // CANARY
+
+
+#ifdef DEBUG
+void printDebugInfo(const Stack_t* stack, StackError error_code);
+
+
+void printStackData(const Stack_t* stack);
+#endif // DEBUG
+
+
+#endif // _STACK_ERROR_H_

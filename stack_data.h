@@ -9,21 +9,27 @@ typedef int Element_t;
 #define SPEC "%d"
 
 
-#ifdef DEBUG
-const Element_t POISON = 0x1DF1E1D;
-#endif
+#define GR "\x1b[32m"
+#define DF "\x1b[31m"
+
+
+#ifdef POISON
+const Element_t POISON_VALUE = 0x1DF1E1D;
+#endif // POISON
+#ifdef CANARY
 const Element_t LEFT_CANARY = 0xFF1C1A1;
 const Element_t RIGHT_CANARY = 0xFF51DE5;
+#endif // CANARY
 
 
 typedef enum {
     SUCCESS = 0,
     NULL_PTR,
     OUT_OF_MEMORY,
-    STACK_OVERFLOW,
     STACK_UNDERFLOW,
-    POISON_CORRUPTED,
+    STACK_OVERFLOW,
     CANARY_CORRUPTED,
+    POISON_CORRUPTED,
     HASH_CORRUPTED
 } StackError;
 
@@ -35,7 +41,7 @@ typedef struct {
     const char* file_name;
     int line;
 } StackDebugInfo;
-#endif
+#endif // DEBUG
 
 
 typedef struct {
@@ -44,9 +50,11 @@ typedef struct {
     size_t capacity;
 #ifdef DEBUG
     StackDebugInfo debug_info;
+#endif // DEBUG
+#ifdef HASH
     size_t hash;
-#endif
+#endif // HASH
 } Stack_t;
 
 
-#endif
+#endif // _STACK_DATA_H_

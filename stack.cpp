@@ -4,7 +4,9 @@
 
 #include "stack.h"
 #include "stack_error.h"
+#ifdef HASH
 #include "stack_hash.h"
+#endif // HASH
 
 
 StackError stackExpand(Stack_t* stack)
@@ -13,7 +15,12 @@ StackError stackExpand(Stack_t* stack)
     if (error_code != SUCCESS)
         return error_code;
 
-    void* temp = realloc(stack->data, (stack->capacity * 2 + 2) * sizeof(Element_t));
+    size_t new_capacity = stack->capacity * 2;
+#ifdef CANARY
+    new_capacity += 2;
+#endif // CANARY
+
+    void* temp = realloc(stack->data, new_capacity * sizeof(Element_t));
     if (temp == NULL) {
         free(stack->data);
         return OUT_OF_MEMORY;
@@ -21,37 +28,60 @@ StackError stackExpand(Stack_t* stack)
     
     stack->data = (Element_t*)temp;
     stack->capacity *= 2;
+#ifdef CANARY
     stack->data[stack->capacity + 1] = RIGHT_CANARY;
-#ifdef DEBUG
-    for (size_t index = stack->capacity / 2 + 1; index < stack->capacity + 1; index++)
-        stack->data[index] = POISON;
+#endif // CANARY
+#ifdef POISON
+    size_t shift = 0;
+    #ifdef CANARY
+        shift = 1;
+    #endif // CANARY IN POISON
+    for (size_t index = stack->capacity / 2 + shift;
+         index < stack->capacity + shift; index++)
+        stack->data[index] = POISON_VALUE;
+#endif // POISON
+#ifdef HASH
     calculateHash(stack);
-#endif
+#endif // HASH
 
     return SUCCESS;
 }
 
 
-StackError stackCtor(Stack_t* stack, size_t size)
+StackError stackCtor(Stack_t* stack, size_t start_capacity)
+
 {
     if (stack == NULL)
         return NULL_PTR;
 
-    stack->data = (Element_t*)calloc(size + 2, sizeof(Element_t));
+    size_t canary_capacity = 0;
+#ifdef CANARY
+    canary_capacity = 2;
+#endif // CANARY
+    stack->data = (Element_t*)calloc(start_capacity + canary_capacity, sizeof(Element_t));
     if (stack->data == NULL)
         return OUT_OF_MEMORY;
 
-    stack->capacity = size;
+    stack->capacity = start_capacity;
     stack->size = 0;
+#ifdef CANARY
     stack->data[0] = LEFT_CANARY;
-#ifdef DEBUG
-    for (size_t index = 1; index < stack->capacity + 1; index++)
-        stack->data[index] = POISON;
-    calculateHash(stack);
-#endif
     stack->data[stack->capacity + 1] = RIGHT_CANARY;
+#endif // CANARY
+#ifdef POISON
+    size_t shift = 0;
+    #ifdef CANARY
+        shift = 1;
+    #endif // CANARY IN POISON
 
-    return stackErr(stack);
+    for (size_t index = shift; index < stack->capacity + shift; index++)
+        stack->data[index] = POISON_VALUE;
+#endif // POISON
+#ifdef HASH
+    calculateHash(stack);
+#endif // HASH
+
+    return SUCCESS;
 }
 
 
@@ -80,10 +110,14 @@ StackError stackPush(Stack_t* stack, Element_t value)
             return error_code;
     }
 
+#ifdef CANARY
     stack->data[stack->size++ + 1] = value;
-#ifdef DEBUG
+#else
+    stack->data[stack->size++] = value;
+#endif // CANARY
+#ifdef HASH 
     calculateHash(stack);
-#endif
+#endif // HASH
   
     return stackAssert(stack);
 }
@@ -100,11 +134,21 @@ StackError stackPop(Stack_t* stack, Element_t* value)
     if (stack->size == 0)
         return STACK_UNDERFLOW;
 
+#ifdef CANARY
     *value = stack->data[--stack->size + 1];
-#ifdef DEBUG
-    stack->data[stack->size + 1] = POISON;
+#else
+    *value = stack->data[--stack->size];
+#endif // CANARY
+#ifdef POISON
+    #ifdef CANARY
+        stack->data[stack->size + 1] = POISON_VALUE;
+    #else
+        stack->data[stack->size] = POISON_VALUE;
+    #endif // CANARY IN POISON
+#endif // POISON
+#ifdef HASH
     calculateHash(stack);
-#endif
+#endif // HASH
 
     return stackAssert(stack);
 }

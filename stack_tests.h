@@ -2,21 +2,25 @@
 #define _TESTS_H_
 
 
-#ifdef DEBUG
 void testNormal();
 
 
+#ifdef CANARY
 void testCanaryCorruption();
+#endif // CANARY
 
 
+#ifdef POISON
 void testPoisonCorruption();
+#endif // POISON
 
 
+#ifdef HASH
 void testHashCorruption();
+#endif // HASH
 
 
 void testUnderflow();
-#endif
 
 
-#endif
+#endif // _TESTS_H_

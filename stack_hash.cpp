@@ -5,7 +5,6 @@
 #include "stack_data.h"
 
 
-#ifdef DEBUG
 size_t djb2(const unsigned char* data, size_t size)
 {
     assert(data != NULL);
@@ -23,7 +22,13 @@ bool checkHash(const Stack_t* stack)
     assert(stack != NULL);
     assert(stack->data != NULL);
 
-    return stack->hash == djb2((unsigned char*)stack->data, sizeof(Element_t) * (stack->size + 1));
+    size_t shift = 0;
+#ifdef CANARY
+    shift = 1;
+#endif // CANARY;
+
+    return stack->hash ==
+           djb2((unsigned char*)(stack->data + shift), sizeof(Element_t) * stack->size);
 }
 
 
@@ -32,7 +37,9 @@ void calculateHash(Stack_t* stack)
     assert(stack != NULL);
     assert(stack->data != NULL);
 
-    stack->hash = djb2((unsigned char*)stack->data, sizeof(Element_t) * (stack->size + 1));
+    size_t shift = 0;
+#ifdef CANARY
+    shift = 1;
+#endif // CANARY;
+    stack->hash = djb2((unsigned char*)(stack->data + shift), sizeof(Element_t) * stack->size);
 }
-#endif
-
