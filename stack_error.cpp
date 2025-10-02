@@ -33,7 +33,8 @@ StackError _stackAssert(const Stack_t* stack,
                 function, file, line);
         stackDump(stack, error_code);
 #ifdef HARD
-        stackDtor(stack);
+        if (stack != NULL)
+            stackDtor(stack);
         abort();
 #endif // HARD
     }
@@ -47,7 +48,8 @@ StackError _stackAssert(const Stack_t* stack)
     if (error_code != SUCCESS) {
         stackDump(stack, error_code);
 #ifdef HARD
-        stackDtor(stack);
+        if (stack != NULL)
+            stackDtor(stack);
         abort();
 #endif // HARD
     }

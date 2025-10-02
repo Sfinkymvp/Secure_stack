@@ -55,7 +55,7 @@ void testPoisonCorruption()
     stackCtor(&stack_poison, 5);
 
     stackPush(&stack_poison, 42);
-    stack_poison.data[stack_poison.size] = 111;
+    stack_poison.data[stack_poison.size + 1] = 111;
 
     Element_t value = 0;
     StackError error_code = stackPop(&stack_poison, &value);
