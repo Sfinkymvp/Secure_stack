@@ -17,29 +17,39 @@ size_t djb2(const unsigned char* data, size_t size)
 }
 
 
-bool checkHash(const Stack_t* stack)
+bool checkStackHash(const Stack_t* stack)
 {
     assert(stack != NULL);
     assert(stack->data != NULL);
-
-    size_t shift = 0;
-#ifdef CANARY
-    shift = 1;
-#endif // CANARY;
 
     return stack->hash ==
-           djb2((unsigned char*)(stack->data + shift), sizeof(Element_t) * stack->size);
+           djb2((const unsigned char*)(stack->data + SHIFT), sizeof(Element_t) * stack->size);
 }
 
 
-void calculateHash(Stack_t* stack)
+void calculateStackHash(Stack_t* stack)
 {
     assert(stack != NULL);
     assert(stack->data != NULL);
 
-    size_t shift = 0;
-#ifdef CANARY
-    shift = 1;
-#endif // CANARY;
-    stack->hash = djb2((unsigned char*)(stack->data + shift), sizeof(Element_t) * stack->size);
+    stack->hash = djb2((unsigned char*)(stack->data + SHIFT), sizeof(Element_t) * stack->size);
 }
+
+
+#ifdef STRUCT_PROTECT
+bool checkStructHash(const Stack_t* stack)
+{
+    assert(stack != NULL);
+
+    return stack->struct_hash ==
+           djb2((const unsigned char*)stack + sizeof(size_t), sizeof(Stack_t) - sizeof(size_t) * 3);
+}
+
+
+void calculateStructHash(Stack_t* stack)
+{
+    assert(stack != NULL);
+
+    stack->struct_hash = djb2((unsigned char*)stack + sizeof(size_t), sizeof(Stack_t) - sizeof(size_t) * 3);
+}
+#endif

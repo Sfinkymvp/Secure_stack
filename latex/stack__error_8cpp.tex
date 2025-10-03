@@ -1,0 +1,102 @@
+\doxysection{Файл stack\+\_\+error.\+cpp}
+\hypertarget{stack__error_8cpp}{}\label{stack__error_8cpp}\index{stack\_error.cpp@{stack\_error.cpp}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include "{}stack\+\_\+error.\+h"{}}\newline
+{\ttfamily \#include "{}stack.\+h"{}}\newline
+Граф включаемых заголовочных файлов для stack\+\_\+error.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{stack__error_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Функции}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}} \mbox{\hyperlink{stack__error_8cpp_ac268a1d9c28591337d05db138e2363ec}{\+\_\+stack\+Assert}} (\mbox{\hyperlink{structStack__t}{Stack\+\_\+t}} \texorpdfstring{$\ast$}{*}stack)
+\item 
+\mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}} \mbox{\hyperlink{stack__error_8cpp_a22bdc7d359b93f131b63b28ff4ec9df4}{stack\+Verify}} (const \mbox{\hyperlink{structStack__t}{Stack\+\_\+t}} \texorpdfstring{$\ast$}{*}stack)
+\item 
+void \mbox{\hyperlink{stack__error_8cpp_aab51a3a9539a52fc62c551b45555da04}{stack\+Dump}} (const \mbox{\hyperlink{structStack__t}{Stack\+\_\+t}} \texorpdfstring{$\ast$}{*}stack, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}} error\+\_\+code)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Переменные}
+\begin{DoxyCompactItemize}
+\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{stack__error_8cpp_a75410446b48258bc1a7854bebee3831b}{Error\+String}} \mbox{[}$\,$\mbox{]}
+\begin{DoxyCompactList}\small\item\em Строковые константы с информацией о кодах ошибок \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Функции}
+\Hypertarget{stack__error_8cpp_ac268a1d9c28591337d05db138e2363ec}\label{stack__error_8cpp_ac268a1d9c28591337d05db138e2363ec} 
+\index{stack\_error.cpp@{stack\_error.cpp}!\_stackAssert@{\_stackAssert}}
+\index{\_stackAssert@{\_stackAssert}!stack\_error.cpp@{stack\_error.cpp}}
+\doxysubsubsection{\texorpdfstring{\_stackAssert()}{\_stackAssert()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}} \+\_\+stack\+Assert (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structStack__t}{Stack\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{stack }\end{DoxyParamCaption})}
+
+Проверяет стек ~\newline
+Определена без режима DEBUG ~\newline
+С режимом HARD вызывает аварийное завершение программы 
+\begin{DoxyParams}{Аргументы}
+{\em stack} & Указатель на структуру стека \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+Код ошибки 
+\end{DoxyReturn}
+\Hypertarget{stack__error_8cpp_aab51a3a9539a52fc62c551b45555da04}\label{stack__error_8cpp_aab51a3a9539a52fc62c551b45555da04} 
+\index{stack\_error.cpp@{stack\_error.cpp}!stackDump@{stackDump}}
+\index{stackDump@{stackDump}!stack\_error.cpp@{stack\_error.cpp}}
+\doxysubsubsection{\texorpdfstring{stackDump()}{stackDump()}}
+{\footnotesize\ttfamily void stack\+Dump (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structStack__t}{Stack\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{stack,  }\item[{\mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}}}]{error\+\_\+code }\end{DoxyParamCaption})}
+
+Распечатывает информацию о стеке при возникновении ошибки 
+\begin{DoxyParams}{Аргументы}
+{\em stack} & Указатель на структуру стека \\
+\hline
+{\em error\+\_\+code} & Код ошибки \\
+\hline
+\end{DoxyParams}
+\Hypertarget{stack__error_8cpp_a22bdc7d359b93f131b63b28ff4ec9df4}\label{stack__error_8cpp_a22bdc7d359b93f131b63b28ff4ec9df4} 
+\index{stack\_error.cpp@{stack\_error.cpp}!stackVerify@{stackVerify}}
+\index{stackVerify@{stackVerify}!stack\_error.cpp@{stack\_error.cpp}}
+\doxysubsubsection{\texorpdfstring{stackVerify()}{stackVerify()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}} stack\+Verify (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structStack__t}{Stack\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{stack }\end{DoxyParamCaption})}
+
+Находит ошибки при работе стека 
+\begin{DoxyParams}{Аргументы}
+{\em stack} & Указатель на структуру стека \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+Код ошибки 
+\end{DoxyReturn}
+
+
+\doxysubsection{Переменные}
+\Hypertarget{stack__error_8cpp_a75410446b48258bc1a7854bebee3831b}\label{stack__error_8cpp_a75410446b48258bc1a7854bebee3831b} 
+\index{stack\_error.cpp@{stack\_error.cpp}!ErrorString@{ErrorString}}
+\index{ErrorString@{ErrorString}!stack\_error.cpp@{stack\_error.cpp}}
+\doxysubsubsection{\texorpdfstring{ErrorString}{ErrorString}}
+{\footnotesize\ttfamily const char\texorpdfstring{$\ast$}{*} Error\+String\mbox{[}$\,$\mbox{]}}
+
+{\bfseries Инициализатор}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}SUCCESS\ (error\ 0)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}NULL\_PTR\ (error\ 1)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}OUT\_OF\_MEMORY\ (error\ 2)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}STACK\_UNDERFLOW\ (error\ 3)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}STACK\_OVERFLOW\ (error\ 4)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}CANARY\_CORRUPTED\ (error\ 5)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}POISON\_CORRUPTED\ (error\ 6)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}HASH\_CORRUPTED\ (error\ 7)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}STRUCT\_CANARY\_CORRUPTED\ (error\ 8)"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}STRUCT\_HASH\_CORRUPTED\ (error\ 9)"{}}\}}
+
+\end{DoxyCode}
+
+
+Строковые константы с информацией о кодах ошибок 
+

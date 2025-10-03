@@ -9,7 +9,7 @@
 #endif // HASH
 
 
-StackError stackExpand(Stack_t* stack)
+static StackError stackExpand(Stack_t* stack)
 {
     StackError error_code = stackAssert(stack);
     if (error_code != SUCCESS)
@@ -22,27 +22,57 @@ StackError stackExpand(Stack_t* stack)
 
     void* temp = realloc(stack->data, new_capacity * sizeof(Element_t));
     if (temp == NULL) {
-        free(stack->data);
         return OUT_OF_MEMORY;
     }
     
     stack->data = (Element_t*)temp;
     stack->capacity *= 2;
 #ifdef CANARY
-    stack->data[stack->capacity + 1] = RIGHT_CANARY;
+    stack->data[stack->capacity + SHIFT] = RIGHT_CANARY;
 #endif // CANARY
 #ifdef POISON
-    size_t shift = 0;
-    #ifdef CANARY
-        shift = 1;
-    #endif // CANARY IN POISON
-    for (size_t index = stack->capacity / 2 + shift;
-         index < stack->capacity + shift; index++)
+    for (size_t index = stack->capacity / 2 + SHIFT;
+         index < stack->capacity + SHIFT; index++)
         stack->data[index] = POISON_VALUE;
 #endif // POISON
 #ifdef HASH
-    calculateHash(stack);
+    calculateStackHash(stack);
 #endif // HASH
+#ifdef STRUCT_PROTECT
+    calculateStructHash(stack);
+#endif // STRUCT_PROTECT
+
+    return SUCCESS;
+}
+
+
+static StackError stackShrink(Stack_t* stack)
+{
+    StackError error_code = stackAssert(stack);
+    if (error_code != SUCCESS)
+        return error_code;
+
+    size_t new_capacity = stack->capacity / 2;
+#ifdef CANARY
+    new_capacity += 2;
+#endif // CANARY
+
+    void* temp = realloc(stack->data, new_capacity * sizeof(Element_t));
+    if (temp == NULL) {
+        return OUT_OF_MEMORY;
+    }
+
+    stack->data = (Element_t*)temp;
+    stack->capacity /= 2;
+#ifdef CANARY
+    stack->data[stack->capacity + SHIFT] = RIGHT_CANARY;
+#endif // CANARY
+#ifdef HASH
+    calculateStackHash(stack);
+#endif // HASH
+#ifdef STRUCT_PROTECT
+    calculateStructHash(stack);
+#endif // STRUCT_PROTECT
 
     return SUCCESS;
 }
@@ -66,20 +96,18 @@ StackError stackCtor(Stack_t* stack, size_t start_capacity)
     stack->size = 0;
 #ifdef CANARY
     stack->data[0] = LEFT_CANARY;
-    stack->data[stack->capacity + 1] = RIGHT_CANARY;
+    stack->data[stack->capacity + SHIFT] = RIGHT_CANARY;
 #endif // CANARY
 #ifdef POISON
-    size_t shift = 0;
-    #ifdef CANARY
-        shift = 1;
-    #endif // CANARY IN POISON
-
-    for (size_t index = shift; index < stack->capacity + shift; index++)
+    for (size_t index = SHIFT; index < stack->capacity + SHIFT; index++)
         stack->data[index] = POISON_VALUE;
 #endif // POISON
 #ifdef HASH
-    calculateHash(stack);
+    calculateStackHash(stack);
 #endif // HASH
+#ifdef STRUCT_PROTECT
+    calculateStructHash(stack);
+#endif // STRUCT_PROTECT
 
     return SUCCESS;
 }
@@ -110,15 +138,14 @@ StackError stackPush(Stack_t* stack, Element_t value)
             return error_code;
     }
 
-#ifdef CANARY
-    stack->data[stack->size++ + 1] = value;
-#else
-    stack->data[stack->size++] = value;
-#endif // CANARY
+    stack->data[stack->size++ + SHIFT] = value;
 #ifdef HASH 
-    calculateHash(stack);
+    calculateStackHash(stack);
 #endif // HASH
-  
+#ifdef STRUCT_PROTECT
+    calculateStructHash(stack);
+#endif // STRUCT_PROTECT
+
     return stackAssert(stack);
 }
 
@@ -134,21 +161,20 @@ StackError stackPop(Stack_t* stack, Element_t* value)
     if (stack->size == 0)
         return STACK_UNDERFLOW;
 
-#ifdef CANARY
-    *value = stack->data[--stack->size + 1];
-#else
-    *value = stack->data[--stack->size];
-#endif // CANARY
+    *value = stack->data[--stack->size + SHIFT];
 #ifdef POISON
-    #ifdef CANARY
-        stack->data[stack->size + 1] = POISON_VALUE;
-    #else
-        stack->data[stack->size] = POISON_VALUE;
-    #endif // CANARY IN POISON
+    stack->data[stack->size + SHIFT] = POISON_VALUE;
 #endif // POISON
 #ifdef HASH
-    calculateHash(stack);
+    calculateStackHash(stack);
 #endif // HASH
+#ifdef STRUCT_PROTECT
+    calculateStructHash(stack);
+#endif // STRUCT_PROTECT
+
+    if (stack->size <= stack->capacity / 4 &&
+        stack->capacity > START_CAPACITY)
+        stackShrink(stack);
 
     return stackAssert(stack);
 }

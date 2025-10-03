@@ -13,8 +13,10 @@ int main()
 #ifdef DEBUG
     testNormal();
 
+    testUnderflow();
+
 #ifdef CANARY
-    testCanaryCorruption();
+    testStackCanaryCorruption();
 #endif // CANARY IN DEBUG
 
 #ifdef POISON
@@ -22,10 +24,19 @@ int main()
 #endif // POISON IN DEBUG
 
 #ifdef HASH
-    testHashCorruption();
+    testStackHashCorruption();
 #endif // HASH IN DEBUG
 
-    testUnderflow();
+#ifdef STRUCT_PROTECT
+    testStructCanaryCorruption();
+
+    testStructHashCorruption();
+#endif // STRUCT_PROTECT
+
+#endif // DEBUG
+
+#ifndef DEBUG
+    printf("MEOW:)\n");
 #endif // DEBUG
 
     return 0;

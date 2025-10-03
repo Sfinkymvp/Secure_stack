@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "stack_tests.h"
 #include "stack.h"
@@ -6,7 +7,7 @@
 
 void testNormal()
 {
-    printf("testNormal():\n");
+    printf(GR "testNormal():" DF"\n");
 
     INIT_STACK(stack_normal);
 
@@ -23,10 +24,26 @@ void testNormal()
 }
 
 
-#ifdef CANARY
-void testCanaryCorruption()
+void testUnderflow()
 {
-    printf("\n\n\ntestCanaryCorruption():\n");
+    printf(GR "\n\n\ntestUnderflow():" DF"\n");
+
+    INIT_STACK(stack_underflow);
+
+    stackCtor(&stack_underflow, 5);
+
+    Element_t value = 0;
+    StackError error_code = stackPop(&stack_underflow, &value);
+    printf("Test error: %s\n", ErrorString[error_code]);
+
+    stackDtor(&stack_underflow);
+}
+
+
+#ifdef CANARY
+void testStackCanaryCorruption()
+{
+    printf(GR "\n\n\ntestStackCanaryCorruption():" DF"\n");
 
     INIT_STACK(stack_canary);
 
@@ -35,7 +52,7 @@ void testCanaryCorruption()
     stackPush(&stack_canary, 523);
 
     stack_canary.data[0] = 100500;
-    stack_canary.data[stack_canary.capacity + 1] = 112358;
+    stack_canary.data[stack_canary.capacity + SHIFT] = 112358;
     
     StackError error_code = stackPush(&stack_canary, 52);
     printf("Test error: %s\n", ErrorString[error_code]);
@@ -48,14 +65,14 @@ void testCanaryCorruption()
 #ifdef POISON
 void testPoisonCorruption()
 {
-    printf("\n\n\ntestPoisonCorruption():\n");
+    printf(GR "\n\n\ntestPoisonCorruption():" DF"\n");
 
     INIT_STACK(stack_poison);
 
     stackCtor(&stack_poison, 5);
 
     stackPush(&stack_poison, 42);
-    stack_poison.data[stack_poison.size + 1] = 111;
+    stack_poison.data[stack_poison.size + SHIFT] = 111;
 
     Element_t value = 0;
     StackError error_code = stackPop(&stack_poison, &value);
@@ -67,9 +84,9 @@ void testPoisonCorruption()
 
 
 #ifdef HASH
-void testHashCorruption()
+void testStackHashCorruption()
 {
-    printf("\n\n\ntestHashCorruption():\n");
+    printf(GR "\n\n\ntestStackHashCorruption():" DF"\n");
 
     INIT_STACK(stack_hash);
 
@@ -89,17 +106,45 @@ void testHashCorruption()
 #endif // HASH
 
 
-void testUnderflow()
+#ifdef STRUCT_PROTECT
+void testStructCanaryCorruption()
 {
-    printf("\n\n\ntestUnderflow():\n");
+    printf(GR "\n\n\ntestStructCanaryCorruption():" DF"\n");
 
-    INIT_STACK(stack_underflow);
+    INIT_STACK(stack_scanary);
 
-    stackCtor(&stack_underflow, 5);
+    stackCtor(&stack_scanary, 5);
+
+    stackPush(&stack_scanary, 55);
+
+    memset(&stack_scanary, 0, sizeof(size_t));
 
     Element_t value = 0;
-    StackError error_code = stackPop(&stack_underflow, &value);
+    StackError error_code = stackPop(&stack_scanary, &value);
     printf("Test error: %s\n", ErrorString[error_code]);
 
-    stackDtor(&stack_underflow);
+    stackDtor(&stack_scanary);
 }
+
+
+void testStructHashCorruption()
+{
+    printf(GR "\n\n\ntestStructHashCorruption():" DF"\n");
+
+    INIT_STACK(stack_shash);
+
+    stackCtor(&stack_shash, 5);
+
+    stackPush(&stack_shash, 32);
+
+    stack_shash.size = 100000;
+
+    Element_t value = 0;
+    StackError error_code = stackPop(&stack_shash, &value);
+    printf("Test error: %s\n", ErrorString[error_code]);
+
+    stackDtor(&stack_shash);
+}
+
+
+#endif // STRUCT_PROTECT

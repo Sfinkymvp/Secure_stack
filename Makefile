@@ -29,7 +29,7 @@ $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
 
-debug: FLAGS += -DDEBUG -DHASH -DCANARY -DPOISON
+debug: FLAGS += -DDEBUG -D_HARD -DHASH -DCANARY -DPOISON -DSTRUCT_PROTECT
 debug: FILES += $(OBJDIR)/stack_hash.o $(OBJDIR)/stack_tests.o
 
 debug: $(FILES) $(OBJDIR)/stack_hash.o $(OBJDIR)/stack_tests.o

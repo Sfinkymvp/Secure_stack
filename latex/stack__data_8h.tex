@@ -1,0 +1,177 @@
+\doxysection{Файл stack\+\_\+data.\+h}
+\hypertarget{stack__data_8h}{}\label{stack__data_8h}\index{stack\_data.h@{stack\_data.h}}
+Граф файлов, в которые включается этот файл\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{stack__data_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Классы}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structStack__t}{Stack\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Макросы}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{stack__data_8h_a10a734b78bb8dfbb167660d7a6e2b91e}{SPEC}}~"{}\%d"{}
+\begin{DoxyCompactList}\small\item\em Спецификатор типа данных \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{stack__data_8h_a656da95f9680f14093be09a52ab6752f}{GR}}~"{}\textbackslash{}x1b\mbox{[}32m"{}
+\begin{DoxyCompactList}\small\item\em Зеленый цвет для вывода в поток \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{stack__data_8h_a0ad2d5d4043d3b7508e2a4da99d6f673}{DF}}~"{}\textbackslash{}x1b\mbox{[}0m"{}
+\begin{DoxyCompactList}\small\item\em Цвет по умолчанию для вывода в поток \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Определения типов}
+\begin{DoxyCompactItemize}
+\item 
+typedef int \mbox{\hyperlink{stack__data_8h_ad736c35e8f2cfcbd3f766547f124835a}{Element\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Тип данных в стеке \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Перечисления}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}} \{ \newline
+\mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32ac7f69f7c9e5aea9b8f54cf02870e2bf8}{SUCCESS}} = 0
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1924bf7762310b42741263bf33169e38}{NULL\+\_\+\+PTR}}
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32ac9a7e95f8dd5507c2dbd1fb466ec9a85}{OUT\+\_\+\+OF\+\_\+\+MEMORY}}
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32acc9002da8e8bd756048ba1975b9a53a3}{STACK\+\_\+\+UNDERFLOW}}
+, \newline
+\mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a5ab4c680e2046e128008b8a4bb5e2a59}{STACK\+\_\+\+OVERFLOW}}
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1bcc4dbb18f77c868b84f66a4e09a1c4}{CANARY\+\_\+\+CORRUPTED}}
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a83cc8a50b5591ae594a7d24b5cbc7744}{POISON\+\_\+\+CORRUPTED}}
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a3c6e5e9df8c0c937c87b4157fb9882c0}{HASH\+\_\+\+CORRUPTED}}
+, \newline
+\mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a17043ea165602eeb7ac5472a986b64c9}{STRUCT\+\_\+\+CANARY\+\_\+\+CORRUPTED}}
+, \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1d398c05269778804ad139d9a1cd9311}{STRUCT\+\_\+\+HASH\+\_\+\+CORRUPTED}}
+ \}
+\begin{DoxyCompactList}\small\item\em Коды ошибок для операций со стеком \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Переменные}
+\begin{DoxyCompactItemize}
+\item 
+const int \mbox{\hyperlink{stack__data_8h_aaa7a4a6b60ed8fb2056e7e9ccaca840e}{START\+\_\+\+CAPACITY}} = 10
+\begin{DoxyCompactList}\small\item\em Начальная емкость стека \end{DoxyCompactList}\item 
+const int \mbox{\hyperlink{stack__data_8h_aa77c755bcebcae64b7b19461a74435c2}{SHIFT}} = 0
+\begin{DoxyCompactList}\small\item\em Отсутствие сдвига на 1 элемент без режима CANARY. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Макросы}
+\Hypertarget{stack__data_8h_a0ad2d5d4043d3b7508e2a4da99d6f673}\label{stack__data_8h_a0ad2d5d4043d3b7508e2a4da99d6f673} 
+\index{stack\_data.h@{stack\_data.h}!DF@{DF}}
+\index{DF@{DF}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{DF}{DF}}
+{\footnotesize\ttfamily \#define DF~"{}\textbackslash{}x1b\mbox{[}0m"{}}
+
+
+
+Цвет по умолчанию для вывода в поток 
+
+\Hypertarget{stack__data_8h_a656da95f9680f14093be09a52ab6752f}\label{stack__data_8h_a656da95f9680f14093be09a52ab6752f} 
+\index{stack\_data.h@{stack\_data.h}!GR@{GR}}
+\index{GR@{GR}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{GR}{GR}}
+{\footnotesize\ttfamily \#define GR~"{}\textbackslash{}x1b\mbox{[}32m"{}}
+
+
+
+Зеленый цвет для вывода в поток 
+
+\Hypertarget{stack__data_8h_a10a734b78bb8dfbb167660d7a6e2b91e}\label{stack__data_8h_a10a734b78bb8dfbb167660d7a6e2b91e} 
+\index{stack\_data.h@{stack\_data.h}!SPEC@{SPEC}}
+\index{SPEC@{SPEC}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{SPEC}{SPEC}}
+{\footnotesize\ttfamily \#define SPEC~"{}\%d"{}}
+
+
+
+Спецификатор типа данных 
+
+
+
+\doxysubsection{Типы}
+\Hypertarget{stack__data_8h_ad736c35e8f2cfcbd3f766547f124835a}\label{stack__data_8h_ad736c35e8f2cfcbd3f766547f124835a} 
+\index{stack\_data.h@{stack\_data.h}!Element\_t@{Element\_t}}
+\index{Element\_t@{Element\_t}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{Element\_t}{Element\_t}}
+{\footnotesize\ttfamily typedef int \mbox{\hyperlink{stack__data_8h_ad736c35e8f2cfcbd3f766547f124835a}{Element\+\_\+t}}}
+
+
+
+Тип данных в стеке 
+
+
+
+\doxysubsection{Перечисления}
+\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32} 
+\index{stack\_data.h@{stack\_data.h}!StackError@{StackError}}
+\index{StackError@{StackError}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{StackError}{StackError}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{stack__data_8h_a718b65e86333f55ca5e49a321552fa32}{Stack\+Error}}}
+
+
+
+Коды ошибок для операций со стеком 
+
+\begin{DoxyEnumFields}{Элементы перечислений}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SUCCESS@{SUCCESS}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!SUCCESS@{SUCCESS}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32ac7f69f7c9e5aea9b8f54cf02870e2bf8}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32ac7f69f7c9e5aea9b8f54cf02870e2bf8} 
+SUCCESS&Ошибок нет \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NULL\_PTR@{NULL\_PTR}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!NULL\_PTR@{NULL\_PTR}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1924bf7762310b42741263bf33169e38}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1924bf7762310b42741263bf33169e38} 
+NULL\+\_\+\+PTR&Указатель на стек или структуру равен NULL. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OUT\_OF\_MEMORY@{OUT\_OF\_MEMORY}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!OUT\_OF\_MEMORY@{OUT\_OF\_MEMORY}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32ac9a7e95f8dd5507c2dbd1fb466ec9a85}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32ac9a7e95f8dd5507c2dbd1fb466ec9a85} 
+OUT\+\_\+\+OF\+\_\+\+MEMORY&Ошибка выделения памяти \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{STACK\_UNDERFLOW@{STACK\_UNDERFLOW}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!STACK\_UNDERFLOW@{STACK\_UNDERFLOW}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32acc9002da8e8bd756048ba1975b9a53a3}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32acc9002da8e8bd756048ba1975b9a53a3} 
+STACK\+\_\+\+UNDERFLOW&Попытка использования пустого стека \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{STACK\_OVERFLOW@{STACK\_OVERFLOW}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!STACK\_OVERFLOW@{STACK\_OVERFLOW}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a5ab4c680e2046e128008b8a4bb5e2a59}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a5ab4c680e2046e128008b8a4bb5e2a59} 
+STACK\+\_\+\+OVERFLOW&Превышение вместимости стека \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CANARY\_CORRUPTED@{CANARY\_CORRUPTED}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!CANARY\_CORRUPTED@{CANARY\_CORRUPTED}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1bcc4dbb18f77c868b84f66a4e09a1c4}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1bcc4dbb18f77c868b84f66a4e09a1c4} 
+CANARY\+\_\+\+CORRUPTED&Испорчены канарейки стека \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{POISON\_CORRUPTED@{POISON\_CORRUPTED}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!POISON\_CORRUPTED@{POISON\_CORRUPTED}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a83cc8a50b5591ae594a7d24b5cbc7744}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a83cc8a50b5591ae594a7d24b5cbc7744} 
+POISON\+\_\+\+CORRUPTED&Испорчены значения POISON. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HASH\_CORRUPTED@{HASH\_CORRUPTED}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!HASH\_CORRUPTED@{HASH\_CORRUPTED}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a3c6e5e9df8c0c937c87b4157fb9882c0}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a3c6e5e9df8c0c937c87b4157fb9882c0} 
+HASH\+\_\+\+CORRUPTED&Несовпадение хеша в стеке \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{STRUCT\_CANARY\_CORRUPTED@{STRUCT\_CANARY\_CORRUPTED}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!STRUCT\_CANARY\_CORRUPTED@{STRUCT\_CANARY\_CORRUPTED}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a17043ea165602eeb7ac5472a986b64c9}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a17043ea165602eeb7ac5472a986b64c9} 
+STRUCT\+\_\+\+CANARY\+\_\+\+CORRUPTED&Испорчены канарейки в структуре стека \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{STRUCT\_HASH\_CORRUPTED@{STRUCT\_HASH\_CORRUPTED}!stack\_data.h@{stack\_data.h}}\index{stack\_data.h@{stack\_data.h}!STRUCT\_HASH\_CORRUPTED@{STRUCT\_HASH\_CORRUPTED}}}\Hypertarget{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1d398c05269778804ad139d9a1cd9311}\label{stack__data_8h_a718b65e86333f55ca5e49a321552fa32a1d398c05269778804ad139d9a1cd9311} 
+STRUCT\+\_\+\+HASH\+\_\+\+CORRUPTED&Несовпадение хеша в структуре стека \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Переменные}
+\Hypertarget{stack__data_8h_aa77c755bcebcae64b7b19461a74435c2}\label{stack__data_8h_aa77c755bcebcae64b7b19461a74435c2} 
+\index{stack\_data.h@{stack\_data.h}!SHIFT@{SHIFT}}
+\index{SHIFT@{SHIFT}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{SHIFT}{SHIFT}}
+{\footnotesize\ttfamily const int SHIFT = 0}
+
+
+
+Отсутствие сдвига на 1 элемент без режима CANARY. 
+
+\Hypertarget{stack__data_8h_aaa7a4a6b60ed8fb2056e7e9ccaca840e}\label{stack__data_8h_aaa7a4a6b60ed8fb2056e7e9ccaca840e} 
+\index{stack\_data.h@{stack\_data.h}!START\_CAPACITY@{START\_CAPACITY}}
+\index{START\_CAPACITY@{START\_CAPACITY}!stack\_data.h@{stack\_data.h}}
+\doxysubsubsection{\texorpdfstring{START\_CAPACITY}{START\_CAPACITY}}
+{\footnotesize\ttfamily const int START\+\_\+\+CAPACITY = 10}
+
+
+
+Начальная емкость стека 
+

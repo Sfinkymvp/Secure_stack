@@ -1,0 +1,39 @@
+\doxysection{stack\+\_\+tests.\+h}
+\hypertarget{stack__tests_8h_source}{}\label{stack__tests_8h_source}\mbox{\hyperlink{stack__tests_8h}{См. документацию.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_TESTS\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_TESTS\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00006\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{stack__tests_8h_acfc75160e339b329b8f0a96d25246ce7}{testNormal}}();}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00010\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{stack__tests_8h_a2d9ba33591574d023d3df86c8a954f03}{testUnderflow}}();}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifdef\ CANARY}}
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{void}\ testStackCanaryCorruption();}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CANARY}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifdef\ POISON}}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ testPoisonCorruption();}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ POISON}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifdef\ HASH}}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ testStackHashCorruption();}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HASH}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifdef\ STRUCT\_PROTECT}}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ testStructCanaryCorruption();}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ testStructHashCorruption();}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ STRUCT\_PROTECT}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_TESTS\_H\_}}
+
+\end{DoxyCode}

@@ -4,9 +4,9 @@
 
 #include "stack_error.h"
 #include "stack.h"
-#ifdef DEBUG
+#ifdef HASH
 #include "stack_hash.h"
-#endif
+#endif // HASH
 
 
 const char* ErrorString[] = {
@@ -17,14 +17,16 @@ const char* ErrorString[] = {
     "STACK_OVERFLOW (error 4)",
     "CANARY_CORRUPTED (error 5)",
     "POISON_CORRUPTED (error 6)",
-    "HASH_CORRUPTED (error 7)"};
+    "HASH_CORRUPTED (error 7)",
+    "STRUCT_CANARY_CORRUPTED (error 8)",
+    "STRUCT_HASH_CORRUPTED (error 9)"};
 
 
 #ifdef DEBUG
-StackError _stackAssert(const Stack_t* stack,
-                       const char* function,
-                       const char* file,
-                       int line)
+StackError _stackAssert(Stack_t* stack,
+                        const char* function,
+                        const char* file,
+                        int line)
 {
     StackError error_code = stackVerify(stack);
 
@@ -41,7 +43,7 @@ StackError _stackAssert(const Stack_t* stack,
     return error_code;
 }
 #else
-StackError _stackAssert(const Stack_t* stack)
+StackError _stackAssert(Stack_t* stack)
 {
     StackError error_code = stackVerify(stack);
 
@@ -62,23 +64,26 @@ StackError stackVerify(const Stack_t* stack)
 {
     if (stack == NULL || stack->data == NULL)
         return NULL_PTR;
-    if (stack->size > stack->capacity)
-        return STACK_OVERFLOW;
+#ifdef STRUCT_PROTECT
+    if (stack->left_canary != STRUCT_LEFT_CANARY ||
+        stack->right_canary != STRUCT_RIGHT_CANARY)
+        return STRUCT_CANARY_CORRUPTED;
+    if (!checkStructHash(stack))
+        return STRUCT_HASH_CORRUPTED;
+#endif // STRUCT_PROTECT
 #ifdef CANARY
     if (stack->data[0] != LEFT_CANARY ||
-        stack->data[stack->capacity + 1] != RIGHT_CANARY)
+        stack->data[stack->capacity + SHIFT] != RIGHT_CANARY)
         return CANARY_CORRUPTED;
 #endif // CANARY
+    if (stack->size > stack->capacity)
+        return STACK_OVERFLOW;
 #ifdef HASH
-    if (!checkHash(stack))
+    if (!checkStackHash(stack))
         return HASH_CORRUPTED; 
 #endif // HASH
 #ifdef POISON
-    size_t shift = 0;
-    #ifdef CANARY
-        shift = 1;
-    #endif // CANARY IN POISON
-    for (size_t index = stack->size + shift; index < stack->capacity + shift; index++)
+    for (size_t index = stack->size + SHIFT; index < stack->capacity + SHIFT; index++)
         if (stack->data[index] != POISON_VALUE)
             return POISON_CORRUPTED;
 #endif // POISON
@@ -106,34 +111,61 @@ void stackDump(const Stack_t* stack, StackError error_code)
         fprintf(stderr, "data[NULL POINTER]\n");
         return;
     }
-#ifdef CANARY
-    printCanaryState(stack);
-#endif // CANARY
 
-    fprintf(stderr, "data[%p]\n", stack->data);
+#ifdef STRUCT_PROTECT
+    printStructCanaryState(stack); 
+#endif // STRUCT_PROTECT
+
+    if (error_code != STRUCT_CANARY_CORRUPTED &&
+        error_code != STRUCT_HASH_CORRUPTED) {
+#ifdef CANARY
+        printStackCanaryState(stack);
+#endif // CANARY
+        fprintf(stderr, "data[%p]\n", stack->data);
 #ifdef DEBUG 
-    printStackData(stack);
+        printStackData(stack);
 #endif // DEBUG
+    }
 }
 
 
+#ifdef STRUCT_PROTECT
+void printStructCanaryState(const Stack_t* stack)
+{
+    assert(stack != NULL);
+
+    if (stack->left_canary == STRUCT_LEFT_CANARY)
+        fprintf(stderr, "STRUCT_LEFT_CANARY OK: 0x%lX\n", stack->left_canary);
+    else
+        fprintf(stderr, "STRUCT_LEFT_CANARY NOT OK: 0x%lX (expected 0x%lX)\n",
+                stack->left_canary, STRUCT_LEFT_CANARY);
+        
+    if (stack->right_canary == STRUCT_RIGHT_CANARY)
+        fprintf(stderr, "STRUCT_RIGHT_CANARY OK: 0x%lX\n", stack->right_canary);
+    else
+        fprintf(stderr, "STRUCT_RIGHT_CANARY NOT OK: 0x%lX (expected 0x%lX)\n", 
+                stack->right_canary, STRUCT_RIGHT_CANARY);
+}
+#endif // STRUCT_PROTECT
+
+
 #ifdef CANARY
-void printCanaryState(const Stack_t* stack)
+void printStackCanaryState(const Stack_t* stack)
 {
     assert(stack != NULL);
     assert(stack->data != NULL);
 
     if (stack->data[0] == LEFT_CANARY)
-        fprintf(stderr, "LEFT_CANARY OK: 0x%X\n", (unsigned int)stack->data[0]);
+        fprintf(stderr, "STACK_LEFT_CANARY OK: 0x%X\n", (unsigned int)stack->data[0]);
     else
-        fprintf(stderr, "LEFT_CANARY NOT OK: 0x%X (expected 0x%X)\n",
+        fprintf(stderr, "STACK_LEFT_CANARY NOT OK: 0x%X (expected 0x%X)\n",
                 (unsigned int)stack->data[0], (unsigned int)LEFT_CANARY);
         
-    if (stack->data[stack->capacity + 1] == RIGHT_CANARY)
-        fprintf(stderr, "RIGHT_CANARY OK: 0x%X\n", (unsigned int)stack->data[stack->capacity + 1]);
+    if (stack->data[stack->capacity + SHIFT] == RIGHT_CANARY)
+        fprintf(stderr, "STACK_RIGHT_CANARY OK: 0x%X\n", (unsigned int)stack->data[stack->capacity + SHIFT]);
     else
-        fprintf(stderr, "RIGHT_CANARY NOT OK: 0x%X (expected 0x%X)\n", 
-                (unsigned int)stack->data[stack->capacity + 1], (unsigned int)RIGHT_CANARY);
+        fprintf(stderr, "STACK_RIGHT_CANARY NOT OK: 0x%X (expected 0x%X)\n", 
+                (unsigned int)stack->data[stack->capacity + SHIFT], (unsigned int)RIGHT_CANARY);
 }
 #endif // CANARY
 
@@ -154,21 +186,16 @@ void printStackData(const Stack_t* stack)
 {
     fprintf(stderr, "{\n");
 
-#ifdef CANARY
-    size_t canary_shift = 1;
-#else
-    size_t canary_shift = 0;
-#endif // CANARY
     size_t index = 0;
-    for (index = canary_shift; index < stack->size + canary_shift; index++)
-        fprintf(stderr, "\t*[%zu] = " SPEC"\n", index - canary_shift, stack->data[index]);
+    for (index = SHIFT; index < stack->size + SHIFT; index++)
+        fprintf(stderr, "\t*[%zu] = " SPEC"\n", index - SHIFT, stack->data[index]);
 
 #ifdef POISON
-    for (; index < stack->capacity + canary_shift; index++) {
+    for (; index < stack->capacity + SHIFT; index++) {
         if (stack->data[index] == POISON_VALUE)
-            fprintf(stderr, "\t [%zu] = POISON\n", index - canary_shift);
+            fprintf(stderr, "\t [%zu] = POISON\n", index - SHIFT);
         else
-            fprintf(stderr, "\t [%zu] = CORRUPTED (not POISON)\n", index - canary_shift);
+            fprintf(stderr, "\t [%zu] = CORRUPTED (not POISON)\n", index - SHIFT);
     }
 #endif // POISON
     fprintf(stderr, "}\n");
