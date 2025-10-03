@@ -4,9 +4,9 @@
 
 #include "stack_error.h"
 #include "stack.h"
-#ifdef HASH
+#ifdef HASH_ENABLED
 #include "stack_hash.h"
-#endif // HASH
+#endif // HASH_ENABLED
 
 
 const char* ErrorString[] = {
@@ -72,8 +72,8 @@ StackError stackVerify(const Stack_t* stack)
         return STRUCT_HASH_CORRUPTED;
 #endif // STRUCT_PROTECT
 #ifdef CANARY
-    if (stack->data[0] != LEFT_CANARY ||
-        stack->data[stack->capacity + SHIFT] != RIGHT_CANARY)
+    if (stack->data[-1] != LEFT_CANARY ||
+        stack->data[stack->capacity] != RIGHT_CANARY)
         return CANARY_CORRUPTED;
 #endif // CANARY
     if (stack->size > stack->capacity)
@@ -83,7 +83,7 @@ StackError stackVerify(const Stack_t* stack)
         return HASH_CORRUPTED; 
 #endif // HASH
 #ifdef POISON
-    for (size_t index = stack->size + SHIFT; index < stack->capacity + SHIFT; index++)
+    for (size_t index = stack->size; index < stack->capacity; index++)
         if (stack->data[index] != POISON_VALUE)
             return POISON_CORRUPTED;
 #endif // POISON
@@ -104,6 +104,10 @@ void stackDump(const Stack_t* stack, StackError error_code)
 #else
     fprintf(stderr, "Stack [%p] (%s)\n", stack, ErrorString[error_code]);
 #endif // DEBUG
+#ifdef STRUCT_PROTECT
+    printStructCanaryState(stack); 
+#endif // STRUCT_PROTECT
+
     fprintf(stderr, "size = %zu\n", stack->size);
     fprintf(stderr, "capacity = %zu\n\n", stack->capacity);
 
@@ -111,10 +115,6 @@ void stackDump(const Stack_t* stack, StackError error_code)
         fprintf(stderr, "data[NULL POINTER]\n");
         return;
     }
-
-#ifdef STRUCT_PROTECT
-    printStructCanaryState(stack); 
-#endif // STRUCT_PROTECT
 
     if (error_code != STRUCT_CANARY_CORRUPTED &&
         error_code != STRUCT_HASH_CORRUPTED) {
@@ -141,9 +141,9 @@ void printStructCanaryState(const Stack_t* stack)
                 stack->left_canary, STRUCT_LEFT_CANARY);
         
     if (stack->right_canary == STRUCT_RIGHT_CANARY)
-        fprintf(stderr, "STRUCT_RIGHT_CANARY OK: 0x%lX\n", stack->right_canary);
+        fprintf(stderr, "STRUCT_RIGHT_CANARY OK: 0x%lX\n\n", stack->right_canary);
     else
-        fprintf(stderr, "STRUCT_RIGHT_CANARY NOT OK: 0x%lX (expected 0x%lX)\n", 
+        fprintf(stderr, "STRUCT_RIGHT_CANARY NOT OK: 0x%lX (expected 0x%lX)\n\n", 
                 stack->right_canary, STRUCT_RIGHT_CANARY);
 }
 #endif // STRUCT_PROTECT
@@ -155,17 +155,17 @@ void printStackCanaryState(const Stack_t* stack)
     assert(stack != NULL);
     assert(stack->data != NULL);
 
-    if (stack->data[0] == LEFT_CANARY)
-        fprintf(stderr, "STACK_LEFT_CANARY OK: 0x%X\n", (unsigned int)stack->data[0]);
+    if (stack->data[-1] == LEFT_CANARY)
+        fprintf(stderr, "STACK_LEFT_CANARY OK: 0x%X\n", (unsigned int)stack->data[-1]);
     else
         fprintf(stderr, "STACK_LEFT_CANARY NOT OK: 0x%X (expected 0x%X)\n",
-                (unsigned int)stack->data[0], (unsigned int)LEFT_CANARY);
+                (unsigned int)stack->data[-1], (unsigned int)LEFT_CANARY);
         
-    if (stack->data[stack->capacity + SHIFT] == RIGHT_CANARY)
-        fprintf(stderr, "STACK_RIGHT_CANARY OK: 0x%X\n", (unsigned int)stack->data[stack->capacity + SHIFT]);
+    if (stack->data[stack->capacity] == RIGHT_CANARY)
+        fprintf(stderr, "STACK_RIGHT_CANARY OK: 0x%X\n", (unsigned int)stack->data[stack->capacity]);
     else
         fprintf(stderr, "STACK_RIGHT_CANARY NOT OK: 0x%X (expected 0x%X)\n", 
-                (unsigned int)stack->data[stack->capacity + SHIFT], (unsigned int)RIGHT_CANARY);
+                (unsigned int)stack->data[stack->capacity], (unsigned int)RIGHT_CANARY);
 }
 #endif // CANARY
 
@@ -187,15 +187,15 @@ void printStackData(const Stack_t* stack)
     fprintf(stderr, "{\n");
 
     size_t index = 0;
-    for (index = SHIFT; index < stack->size + SHIFT; index++)
-        fprintf(stderr, "\t*[%zu] = " SPEC"\n", index - SHIFT, stack->data[index]);
+    for (; index < stack->size; index++)
+        fprintf(stderr, "\t*[%zu] = " SPEC"\n", index, stack->data[index]);
 
 #ifdef POISON
-    for (; index < stack->capacity + SHIFT; index++) {
+    for (; index < stack->capacity; index++) {
         if (stack->data[index] == POISON_VALUE)
-            fprintf(stderr, "\t [%zu] = POISON\n", index - SHIFT);
+            fprintf(stderr, "\t [%zu] = POISON\n", index);
         else
-            fprintf(stderr, "\t [%zu] = CORRUPTED (not POISON)\n", index - SHIFT);
+            fprintf(stderr, "\t [%zu] = CORRUPTED (not POISON)\n", index);
     }
 #endif // POISON
     fprintf(stderr, "}\n");

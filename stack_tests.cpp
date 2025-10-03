@@ -51,8 +51,8 @@ void testStackCanaryCorruption()
 
     stackPush(&stack_canary, 523);
 
-    stack_canary.data[0] = 100500;
-    stack_canary.data[stack_canary.capacity + SHIFT] = 112358;
+    stack_canary.data[-1] = 100500;
+    stack_canary.data[stack_canary.capacity] = 112358;
     
     StackError error_code = stackPush(&stack_canary, 52);
     printf("Test error: %s\n", ErrorString[error_code]);
@@ -72,7 +72,7 @@ void testPoisonCorruption()
     stackCtor(&stack_poison, 5);
 
     stackPush(&stack_poison, 42);
-    stack_poison.data[stack_poison.size + SHIFT] = 111;
+    stack_poison.data[stack_poison.size] = 111;
 
     Element_t value = 0;
     StackError error_code = stackPop(&stack_poison, &value);
@@ -94,8 +94,8 @@ void testStackHashCorruption()
     
     stackPush(&stack_hash, 5);
     stackPush(&stack_hash, 8);
-    stack_hash.data[1] = 888;
-    stack_hash.data[2] = 555;
+    stack_hash.data[0] = 888;
+    stack_hash.data[1] = 555;
 
     Element_t value = 0;
     StackError error_code = stackPop(&stack_hash, &value);

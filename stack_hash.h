@@ -40,4 +40,9 @@ void calculateStructHash(Stack_t* stack);
 #endif // STRUCT_PROTECT
 
 
+/// Обновляет существующие хеши
+/// @param stack Указатель на структуру стека
+void updateHashes(Stack_t* stack);
+
+
 #endif // _STACK_HASH_H_

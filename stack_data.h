@@ -6,15 +6,6 @@
 const int START_CAPACITY = 10;
 
 
-#ifdef CANARY
-/// Сдвиг на 1 элемент при включенном режиме CANARY
-const int SHIFT = 1;
-#else
-/// Отсутствие сдвига на 1 элемент без режима CANARY
-const int SHIFT = 0;
-#endif // CANARY
-
-
 /// Тип данных в стеке
 typedef int Element_t;
 /// Спецификатор типа данных 
@@ -25,6 +16,11 @@ typedef int Element_t;
 #define GR "\x1b[32m"
 /// Цвет по умолчанию для вывода в поток
 #define DF "\x1b[0m"
+
+
+#if defined(HASH) || defined(STRUCT_PROTECT)
+#define HASH_ENABLED
+#endif
 
 
 #ifdef POISON
@@ -38,9 +34,9 @@ const Element_t LEFT_CANARY = 0xFF1C1A1;
 const Element_t RIGHT_CANARY = 0xFF51DE5;
 #endif // CANARY
 #ifdef STRUCT_PROTECT
-/// Значение левой канарейки структуры стека в режиме CANARY
+/// Значение левой канарейки структуры стека в режиме STRUCT_PROTECT
 const size_t STRUCT_LEFT_CANARY = 0xFF10AD;
-/// Значение правой канарейки структуры стека в режиме CANARY
+/// Значение правой канарейки структуры стека в режиме STRUCT_PROTECT
 const size_t STRUCT_RIGHT_CANARY = 0x0DE55A;
 #endif // STRUCT_PROTECT
 

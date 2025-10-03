@@ -31,7 +31,7 @@ int main()
     testStructCanaryCorruption();
 
     testStructHashCorruption();
-#endif // STRUCT_PROTECT
+#endif // STRUCT_PROTECT IN DEBUG
 
 #endif // DEBUG
 

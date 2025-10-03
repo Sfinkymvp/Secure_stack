@@ -23,7 +23,7 @@ bool checkStackHash(const Stack_t* stack)
     assert(stack->data != NULL);
 
     return stack->hash ==
-           djb2((const unsigned char*)(stack->data + SHIFT), sizeof(Element_t) * stack->size);
+           djb2((const unsigned char*)(stack->data), sizeof(Element_t) * stack->size);
 }
 
 
@@ -32,7 +32,7 @@ void calculateStackHash(Stack_t* stack)
     assert(stack != NULL);
     assert(stack->data != NULL);
 
-    stack->hash = djb2((unsigned char*)(stack->data + SHIFT), sizeof(Element_t) * stack->size);
+    stack->hash = djb2((unsigned char*)(stack->data), sizeof(Element_t) * stack->size);
 }
 
 
@@ -52,4 +52,17 @@ void calculateStructHash(Stack_t* stack)
 
     stack->struct_hash = djb2((unsigned char*)stack + sizeof(size_t), sizeof(Stack_t) - sizeof(size_t) * 3);
 }
-#endif
+#endif // STRUCT_PROTECT
+
+
+void updateHashes(Stack_t* stack)
+{
+    assert(stack != NULL);
+
+#ifdef HASH
+    calculateStackHash(stack);
+#endif // HASH
+#ifdef STRUCT_PROTECT
+    calculateStructHash(stack);
+#endif // STRUCT_PROTECT
+}

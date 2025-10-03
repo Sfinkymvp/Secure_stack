@@ -4,9 +4,9 @@
 
 #include "stack.h"
 #include "stack_error.h"
-#ifdef HASH
+#ifdef HASH_ENABLED
 #include "stack_hash.h"
-#endif // HASH
+#endif // HASH_ENABLED
 
 
 static StackError stackExpand(Stack_t* stack)
@@ -15,12 +15,11 @@ static StackError stackExpand(Stack_t* stack)
     if (error_code != SUCCESS)
         return error_code;
 
-    size_t new_capacity = stack->capacity * 2;
 #ifdef CANARY
-    new_capacity += 2;
+    void* temp = realloc(stack->data - 1, (stack->capacity * 2 + 2) * sizeof(Element_t));
+#else
+    void* temp = realloc(stack->data, stack->capacity * 2 * sizeof(Element_t));
 #endif // CANARY
-
-    void* temp = realloc(stack->data, new_capacity * sizeof(Element_t));
     if (temp == NULL) {
         return OUT_OF_MEMORY;
     }
@@ -28,19 +27,17 @@ static StackError stackExpand(Stack_t* stack)
     stack->data = (Element_t*)temp;
     stack->capacity *= 2;
 #ifdef CANARY
-    stack->data[stack->capacity + SHIFT] = RIGHT_CANARY;
+    stack->data += 1;
+    stack->data[stack->capacity] = RIGHT_CANARY;
 #endif // CANARY
 #ifdef POISON
-    for (size_t index = stack->capacity / 2 + SHIFT;
-         index < stack->capacity + SHIFT; index++)
+    for (size_t index = stack->capacity / 2;
+        index < stack->capacity; index++)
         stack->data[index] = POISON_VALUE;
 #endif // POISON
-#ifdef HASH
-    calculateStackHash(stack);
-#endif // HASH
-#ifdef STRUCT_PROTECT
-    calculateStructHash(stack);
-#endif // STRUCT_PROTECT
+#ifdef HASH_ENABLED
+    updateHashes(stack);
+#endif // HASH_ENABLED
 
     return SUCCESS;
 }
@@ -52,12 +49,11 @@ static StackError stackShrink(Stack_t* stack)
     if (error_code != SUCCESS)
         return error_code;
 
-    size_t new_capacity = stack->capacity / 2;
 #ifdef CANARY
-    new_capacity += 2;
+    void* temp = realloc(stack->data - 1, (stack->capacity / 2 + 2) * sizeof(Element_t));
+#else
+    void* temp = realloc(stack->data, (stack->capacity / 2) * sizeof(Element_t));
 #endif // CANARY
-
-    void* temp = realloc(stack->data, new_capacity * sizeof(Element_t));
     if (temp == NULL) {
         return OUT_OF_MEMORY;
     }
@@ -65,14 +61,12 @@ static StackError stackShrink(Stack_t* stack)
     stack->data = (Element_t*)temp;
     stack->capacity /= 2;
 #ifdef CANARY
-    stack->data[stack->capacity + SHIFT] = RIGHT_CANARY;
+    stack->data += 1;
+    stack->data[stack->capacity] = RIGHT_CANARY;
 #endif // CANARY
-#ifdef HASH
-    calculateStackHash(stack);
-#endif // HASH
-#ifdef STRUCT_PROTECT
-    calculateStructHash(stack);
-#endif // STRUCT_PROTECT
+#ifdef HASH_ENABLED
+    updateHashes(stack);
+#endif // HASH_ENABLED
 
     return SUCCESS;
 }
@@ -84,30 +78,28 @@ StackError stackCtor(Stack_t* stack, size_t start_capacity)
     if (stack == NULL)
         return NULL_PTR;
 
-    size_t canary_capacity = 0;
 #ifdef CANARY
-    canary_capacity = 2;
+    stack->data = (Element_t*)calloc(start_capacity + 2, sizeof(Element_t));
+#else
+    stack->data = (Element_t*)calloc(start_capacity, sizeof(Element_t));
 #endif // CANARY
-    stack->data = (Element_t*)calloc(start_capacity + canary_capacity, sizeof(Element_t));
     if (stack->data == NULL)
         return OUT_OF_MEMORY;
 
     stack->capacity = start_capacity;
     stack->size = 0;
 #ifdef CANARY
-    stack->data[0] = LEFT_CANARY;
-    stack->data[stack->capacity + SHIFT] = RIGHT_CANARY;
+    stack->data += 1;
+    stack->data[-1] = LEFT_CANARY;
+    stack->data[stack->capacity] = RIGHT_CANARY;
 #endif // CANARY
 #ifdef POISON
-    for (size_t index = SHIFT; index < stack->capacity + SHIFT; index++)
+    for (size_t index = 0; index < stack->capacity; index++)
         stack->data[index] = POISON_VALUE;
 #endif // POISON
-#ifdef HASH
-    calculateStackHash(stack);
-#endif // HASH
-#ifdef STRUCT_PROTECT
-    calculateStructHash(stack);
-#endif // STRUCT_PROTECT
+#ifdef HASH_ENABLED
+    updateHashes(stack);
+#endif // HASH_ENABLED
 
     return SUCCESS;
 }
@@ -118,7 +110,14 @@ StackError stackDtor(Stack_t* stack)
     if (stack == NULL)
         return NULL_PTR;
 
+    if (stack->data == NULL)
+        return SUCCESS;
+
+#ifdef CANARY
+    free(--stack->data);
+#else
     free(stack->data);
+#endif // CANARY
     stack->data = NULL;
 
     return SUCCESS;
@@ -138,13 +137,10 @@ StackError stackPush(Stack_t* stack, Element_t value)
             return error_code;
     }
 
-    stack->data[stack->size++ + SHIFT] = value;
-#ifdef HASH 
-    calculateStackHash(stack);
-#endif // HASH
-#ifdef STRUCT_PROTECT
-    calculateStructHash(stack);
-#endif // STRUCT_PROTECT
+    stack->data[stack->size++] = value;
+#ifdef HASH_ENABLED
+    updateHashes(stack);
+#endif // HASH_ENABLED
 
     return stackAssert(stack);
 }
@@ -161,16 +157,13 @@ StackError stackPop(Stack_t* stack, Element_t* value)
     if (stack->size == 0)
         return STACK_UNDERFLOW;
 
-    *value = stack->data[--stack->size + SHIFT];
+    *value = stack->data[--stack->size];
 #ifdef POISON
-    stack->data[stack->size + SHIFT] = POISON_VALUE;
+    stack->data[stack->size] = POISON_VALUE;
 #endif // POISON
-#ifdef HASH
-    calculateStackHash(stack);
-#endif // HASH
-#ifdef STRUCT_PROTECT
-    calculateStructHash(stack);
-#endif // STRUCT_PROTECT
+#ifdef HASH_ENABLED
+    updateHashes(stack);
+#endif // HASH_ENABLED
 
     if (stack->size <= stack->capacity / 4 &&
         stack->capacity > START_CAPACITY)
