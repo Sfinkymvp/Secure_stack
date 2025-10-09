@@ -33,7 +33,9 @@ StackError _stackAssert(Stack_t* stack,
     if (error_code != SUCCESS) {
         fprintf(stderr, "StackAssert triggered in %s (%s:%d)\n",
                 function, file, line);
+#ifdef DUMP
         stackDump(stack, error_code);
+#endif // DUMP
 #ifdef HARD
         if (stack != NULL)
             stackDtor(stack);
@@ -48,7 +50,9 @@ StackError _stackAssert(Stack_t* stack)
     StackError error_code = stackVerify(stack);
 
     if (error_code != SUCCESS) {
+#ifdef DUMP
         stackDump(stack, error_code);
+#endif // DUMP
 #ifdef HARD
         if (stack != NULL)
             stackDtor(stack);

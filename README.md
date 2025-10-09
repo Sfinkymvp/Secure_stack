@@ -15,7 +15,7 @@
 - `-DCANARY`          Стековые канарейки 
 - `-DPOISON`          POISON значения 
 - `-DHASH`            Хеш стека 
-- `-DSTRUCT\_PROTECT` Защита структуры стека (hash + canary) 
+- `-DSTRUCT_PROTECT` Защита структуры стека (hash + canary) 
 - `-DHARD`            Остановка программы при ошибке 
 
 ## Сборка

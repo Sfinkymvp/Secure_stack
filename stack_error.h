@@ -10,11 +10,14 @@
 /// Определен в режиме DEBUG
 /// @param stack Указатель на структуру стека
 #define stackAssert(stack) _stackAssert(stack, __func__, __FILE__, __LINE__)
+
 #else
+
 /// Макрос, вызывающий assert
 /// Определен без режима DEBUG
 /// @param stack Указатель на структуру стека
 #define stackAssert(stack) _stackAssert(stack)
+
 #endif // DEBUG
 
 
@@ -35,7 +38,9 @@ StackError _stackAssert(Stack_t* stack,
                         const char* function,
                         const char* file,
                         int line);
+
 #else
+
 /// Проверяет стек \n
 /// Определена без режима DEBUG \n
 /// С режимом HARD вызывает аварийное завершение программы

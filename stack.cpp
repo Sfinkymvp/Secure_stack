@@ -20,9 +20,8 @@ static StackError stackExpand(Stack_t* stack)
 #else
     void* temp = realloc(stack->data, stack->capacity * 2 * sizeof(Element_t));
 #endif // CANARY
-    if (temp == NULL) {
+    if (temp == NULL)
         return OUT_OF_MEMORY;
-    }
     
     stack->data = (Element_t*)temp;
     stack->capacity *= 2;
@@ -54,9 +53,8 @@ static StackError stackShrink(Stack_t* stack)
 #else
     void* temp = realloc(stack->data, (stack->capacity / 2) * sizeof(Element_t));
 #endif // CANARY
-    if (temp == NULL) {
+    if (temp == NULL)
         return OUT_OF_MEMORY;
-    }
 
     stack->data = (Element_t*)temp;
     stack->capacity /= 2;
